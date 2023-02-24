@@ -1,0 +1,12 @@
+[
+  { "question": "Car", "answer": "Машин" },
+  { "question": "Tree", "answer": "Мод" },
+  { "question": "Book", "answer": "Ном" },
+  { "question": "Dog", "answer": "Нохой" },
+  { "question": "Sun", "answer": "Нар" },
+  { "question": "Computer", "answer": "Компьютер" },
+  { "question": "Fish", "answer": "Загас" },
+  { "question": "House", "answer": "Гэр" },
+  { "question": "Chair", "answer": "Хувцас" },
+  { "question": "Phone", "answer": "Утас" }
+]
