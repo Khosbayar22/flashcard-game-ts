@@ -2,7 +2,6 @@
     ? Өгөгдлийн сангаас өгөгдлийг зөв хариултын хамт уншина.
 */
 import * as fs from "fs";
-import inquirer, { QuestionCollection } from "inquirer";
 
 export class LearnFlashcard implements flashcardApp {
   cards: flashcardData[] = [];
@@ -24,12 +23,11 @@ export class LearnFlashcard implements flashcardApp {
   }
   async startApp() {
     await this.initDatabase();
-    console.log("\n\n****************************");
-    console.log(" Сурах");
-    const ui = new inquirer.ui.BottomBar();
+    console.log("\nСурах (eng | mng) ----------------");
 
-    this.cards.forEach((item) => {
-      ui.log.write(`${item.question} - ${item.answer}`);
+    this.cards.forEach((item, index) => {
+      console.log(`${index + 1}: ${item.question} | ${item.answer}`);
     });
+    console.log("** Буцах бол ямар нэгэн товчин дээр дарах **");
   }
 }

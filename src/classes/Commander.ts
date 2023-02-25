@@ -15,9 +15,7 @@ export class Commander {
   }
 
   sayHello() {
-    console.log("\n****************************");
-    console.log(" Тавтай морил !");
-    console.log("****************************\n");
+    console.log("\n** Тавтай морил! **\n");
   }
 
   async startApp() {
@@ -32,13 +30,13 @@ export class Commander {
             type: "list",
             name: "option",
             message: "Та юу хийх вэ?",
-            choices: ["Тоглох", "Засах", "Сурах", "Гарах"],
+            choices: ["Тоглох", "Өөрчлөлт оруулах", "Сурах", "< Гарах"],
           },
         ];
         await inquirer.prompt(options).then((answers) => {
           if (answers.option === "Тоглох") {
             this.state = "play";
-          } else if (answers.option === "Засах") {
+          } else if (answers.option === "Өөрчлөлт оруулах") {
             this.state = "edit";
           } else if (answers.option === "Сурах") {
             this.state = "learn";
@@ -51,14 +49,13 @@ export class Commander {
         const flashcard = new PlayFlashcard();
         options = [
           {
-            type: "list",
-            name: "option",
-            message: "Тоглох",
-            choices: ["Асуултыг санамсаргүй бад ", "Засах", "Устгах", "Гарах"],
+            type: "confirm",
+            name: "confirmShuffle",
+            message: "Асуултуудыг самансаргүй байдлаар холих",
           },
         ];
         await inquirer.prompt(options).then(async (answers) => {
-          await flashcard.startApp();
+          await flashcard.startApp(answers?.confirmShuffle);
         });
         this.state = "idle";
         /* ЗАСАХ */
@@ -69,7 +66,7 @@ export class Commander {
             type: "list",
             name: "option",
             message: "Засах үйлдэл",
-            choices: ["Нэмэх", "Засах", "Устгах", "Гарах"],
+            choices: ["+ Нэмэх", "Засах", "Устгах", "< Буцах"],
           },
         ];
         await inquirer.prompt(options).then(async (answers) => {
@@ -77,7 +74,7 @@ export class Commander {
             await flashcard.editFlashcard();
           } else if (answers.option === "Устгах") {
             await flashcard.deleteFlashcard();
-          } else if (answers.option === "Нэмэх") {
+          } else if (answers.option === "+ Нэмэх") {
             await flashcard.addFlashcard();
           }
         });

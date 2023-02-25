@@ -28,18 +28,23 @@ export class EditFlashcard implements flashcardApp {
   }
   async startApp() {}
 
-  private updateDatabase(dataString: string): void {
-    fs.writeFile("./db.json", dataString, (err) => {
-      if (err) {
-        console.log("Алдаатай", err);
-      } else {
-        console.log("Амжилттай");
-      }
+  private updateDatabase(dataString: string) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile("./db.json", dataString, (err) => {
+        if (err) {
+          console.log("__ Алдаатай __");
+          reject(true);
+        } else {
+          console.log("** Амжилттай! **");
+          resolve(true);
+        }
+      });
     });
   }
   async editFlashcard() {
-    this.deleteFlashcard();
-    this.addFlashcard();
+    return 0;
+    // this.deleteFlashcard();
+    // this.addFlashcard();
   }
   async deleteFlashcard() {
     await this.initDatabase();
@@ -59,7 +64,7 @@ export class EditFlashcard implements flashcardApp {
       (item) => !answers.choice.includes(item.question)
     );
     const dataString = JSON.stringify(deletedData);
-    this.updateDatabase(dataString);
+    await this.updateDatabase(dataString);
   }
   async addFlashcard() {
     await this.initDatabase();
@@ -67,17 +72,17 @@ export class EditFlashcard implements flashcardApp {
       {
         type: "input",
         name: "question",
-        message: "Асуултаа оруулна уу",
+        message: "Асуулт: ",
       },
       {
         type: "input",
         name: "answer",
-        message: "Хариултаа оруулна уу",
+        message: "Хариулт: ",
       },
     ];
     const answers: flashcardData = await inquirer.prompt(options);
     this.cards.push(answers);
     const dataString = JSON.stringify(this.cards);
-    this.updateDatabase(dataString);
+    await this.updateDatabase(dataString);
   }
 }
