@@ -42,9 +42,8 @@ export class EditFlashcard implements flashcardApp {
     });
   }
   async editFlashcard() {
-    return 0;
-    // this.deleteFlashcard();
-    // this.addFlashcard();
+    this.deleteFlashcard();
+    this.addFlashcard();
   }
   async deleteFlashcard() {
     await this.initDatabase();

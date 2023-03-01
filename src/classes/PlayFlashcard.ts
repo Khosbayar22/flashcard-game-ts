@@ -39,6 +39,7 @@ export class PlayFlashcard implements flashcardApp {
     }
   }
 
+  // DRS 
   initDatabase() {
     return new Promise((resolve, reject) => {
       fs.readFile("db.json", "utf8", (err, data) => {

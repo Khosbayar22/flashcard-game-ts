@@ -86,5 +86,6 @@ export class Commander {
         this.state = "idle";
       }
     }
+    console.log("** Баяртай! **");
   }
 }
