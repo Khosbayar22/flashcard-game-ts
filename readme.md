@@ -23,7 +23,5 @@ Flashcard object нь асуулт, хариулт гэсэн бүтэцтэй. 
 ## Ашигласан эх сурвалжууд
 
 ```bash
-https://github.com/sneddonlewis/Flashcards_CLI
-https://github.com/superhorsy/java-console-flashcards
-https://github.com/ebisu-flashcards/flashcards-cli
+https://www.npmjs.com/package/@types/inquirer
 ```
