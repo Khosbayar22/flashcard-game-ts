@@ -2,16 +2,26 @@
     ? Тайлбар
     ? Сонголтууд, төлөв шалгаад ямар байх эсэхийг шийднэ.
 */
-import inquirer, { QuestionCollection } from "inquirer";
+import inquirer from "inquirer";
 import { LearnFlashcard } from "./LearnFlashcard.js";
 import { EditFlashcard } from "./EditFlashcard.js";
 import { PlayFlashcard } from "./PlayFlashcard.js";
+import { Database } from "./Database.js";
+import * as readline from "readline";
 
 export class Commander {
-  state: string;
+  private applications: flashcardApp[] = [];
 
-  constructor(state: string = "idle") {
-    this.state = state;
+  constructor() {
+    const database = new Database();
+    database.initDatabase();
+
+    const playFlashcard = new PlayFlashcard();
+    const learnFlashcard = new LearnFlashcard();
+    const editFlashcard = new EditFlashcard();
+
+    this.applications.push(playFlashcard, learnFlashcard, editFlashcard);
+    this.listenBackEvent();
   }
 
   sayHello() {
@@ -19,73 +29,41 @@ export class Commander {
   }
 
   async startApp() {
-    let flag: boolean = true;
-    let options: QuestionCollection = [];
+    let flag = true;
 
     while (flag) {
-      /* СОНГОЛТ */
-      if (this.state === "idle") {
-        options = [
-          {
-            type: "list",
-            name: "option",
-            message: "Та юу хийх вэ?",
-            choices: ["Тоглох", "Өөрчлөлт оруулах", "Сурах", "< Гарах"],
-          },
-        ];
-        await inquirer.prompt(options).then((answers) => {
-          if (answers.option === "Тоглох") {
-            this.state = "play";
-          } else if (answers.option === "Өөрчлөлт оруулах") {
-            this.state = "edit";
-          } else if (answers.option === "Сурах") {
-            this.state = "learn";
-          } else {
-            flag = false;
-          }
-        });
-        /* ТОГЛОХ */
-      } else if (this.state === "play") {
-        const flashcard = new PlayFlashcard();
-        options = [
-          {
-            type: "confirm",
-            name: "confirmShuffle",
-            message: "Асуултуудыг самансаргүй байдлаар холих",
-          },
-        ];
-        await inquirer.prompt(options).then(async (answers) => {
-          await flashcard.startApp(answers?.confirmShuffle);
-        });
-        this.state = "idle";
-        /* ЗАСАХ */
-      } else if (this.state === "edit") {
-        const flashcard = new EditFlashcard();
-        options = [
-          {
-            type: "list",
-            name: "option",
-            message: "Засах үйлдэл",
-            choices: ["+ Нэмэх", "Засах", "Устгах", "< Буцах"],
-          },
-        ];
-        await inquirer.prompt(options).then(async (answers) => {
-          if (answers.option === "Засах") {
-            await flashcard.editFlashcard();
-          } else if (answers.option === "Устгах") {
-            await flashcard.deleteFlashcard();
-          } else if (answers.option === "+ Нэмэх") {
-            await flashcard.addFlashcard();
-          }
-        });
-        this.state = "idle";
-        /* СУРАХ */
-      } else if (this.state === "learn") {
-        const flashcard = new LearnFlashcard();
-        flashcard.startApp();
-        this.state = "idle";
+      const options = [
+        {
+          type: "list",
+          name: "option",
+          message: "Та юу хийх вэ?",
+          choices: ["Тоглох", "Өөрчлөлт оруулах", "Сурах", "< Гарах"],
+        },
+      ];
+
+      const { option } = await inquirer.prompt(options);
+
+      switch (option) {
+        case "Тоглох":
+          await this.applications[0].startApp();
+          break;
+        case "Сурах":
+          await this.applications[1].startApp();
+          break;
+        case "Өөрчлөлт оруулах":
+          await this.applications[2].startApp();
+          break;
+        default:
+          flag = false;
+          break;
       }
     }
     console.log("** Баяртай! **");
+  }
+
+  private listenBackEvent() {
+    process.on("disconnect", () => {
+      console.log(`About to exit with code: `);
+    });
   }
 }

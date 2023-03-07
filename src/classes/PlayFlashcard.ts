@@ -1,17 +1,26 @@
-/* 
-    ? Өгөгдлийн сангаас өгөгдөл унших
-    ? Зөв хариулт эсэхийг шалгах
-*/
-import * as fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
+import { Database } from "./Database.js";
 
 export class PlayFlashcard implements flashcardApp {
-  cards: flashcardData[] = [];
+  async startApp() {
+    const options = [
+      {
+        type: "confirm",
+        name: "confirmShuffle",
+        message: "Асуултуудыг самансаргүй байдлаар холих",
+      },
+    ];
 
-  async startApp(shuffle: boolean = false) {
-    await this.initDatabase();
-    if (this.cards.length > 0) {
-      let questions = shuffle ? this.shuffleArray(this.cards) : this.cards;
+    await inquirer.prompt(options).then(async (answers) => {
+      await this.run(answers?.confirmShuffle);
+    });
+  }
+
+  async run(shuffle: boolean = false): Promise<void> {
+    let cards: flashcardData[] = Database.flashcards;
+
+    if (cards.length > 0) {
+      let questions = shuffle ? this.shuffleArray(cards) : cards;
       let sequence: number = 1;
       let correct = 0;
       for (const el of questions) {
@@ -37,23 +46,6 @@ export class PlayFlashcard implements flashcardApp {
     } else {
       console.log("** Хоосон байна! **");
     }
-  }
-
-  // DRS 
-  initDatabase() {
-    return new Promise((resolve, reject) => {
-      fs.readFile("db.json", "utf8", (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        const jsonData = JSON.parse(data);
-        this.cards = jsonData;
-
-        resolve(this.cards);
-      });
-    });
   }
 
   shuffleArray<T>(array: T[]): T[] {

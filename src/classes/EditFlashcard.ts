@@ -1,53 +1,37 @@
-/* 
-    ? Өгөгдлийн сангаас өгөгдлийг уншина.
-    ? Өгөгдөл шинэчлэх
-    ? Устгах
-    ? Үүсгэх
-    ? Засах
-*/
-import * as fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
+import { Database } from "./Database.js";
 
 export class EditFlashcard implements flashcardApp {
-  cards: flashcardData[] = [];
+  run(): void {}
 
-  initDatabase() {
-    return new Promise((resolve, reject) => {
-      fs.readFile("db.json", "utf8", (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        const jsonData = JSON.parse(data);
-        this.cards = jsonData;
-
-        resolve(this.cards);
-      });
+  async startApp() {
+    const options = [
+      {
+        type: "list",
+        name: "option",
+        message: "Засах үйлдэл",
+        choices: ["+ Нэмэх", "Засах", "Устгах", "< Буцах"],
+      },
+    ];
+    await inquirer.prompt(options).then(async (answers) => {
+      if (answers.option === "Засах") {
+        await this.editFlashcard();
+      } else if (answers.option === "Устгах") {
+        await this.deleteFlashcard();
+      } else if (answers.option === "+ Нэмэх") {
+        await this.addFlashcard();
+      }
     });
   }
-  async startApp() {}
 
-  private updateDatabase(dataString: string) {
-    return new Promise((resolve, reject) => {
-      fs.writeFile("./db.json", dataString, (err) => {
-        if (err) {
-          console.log("__ Алдаатай __");
-          reject(true);
-        } else {
-          console.log("** Амжилттай! **");
-          resolve(true);
-        }
-      });
-    });
-  }
   async editFlashcard() {
     this.deleteFlashcard();
     this.addFlashcard();
   }
+
   async deleteFlashcard() {
-    await this.initDatabase();
-    const choices = this.cards.map((item) => {
+    let cards: flashcardData[] = Database.flashcards;
+    const choices = cards.map((item) => {
       return item.question;
     });
     let options: QuestionCollection = [
@@ -59,14 +43,14 @@ export class EditFlashcard implements flashcardApp {
       },
     ];
     const answers = await inquirer.prompt(options);
-    const deletedData = this.cards.filter(
+    const deletedData = cards.filter(
       (item) => !answers.choice.includes(item.question)
     );
     const dataString = JSON.stringify(deletedData);
     await this.updateDatabase(dataString);
   }
+
   async addFlashcard() {
-    await this.initDatabase();
     let options: QuestionCollection = [
       {
         type: "input",
@@ -79,9 +63,15 @@ export class EditFlashcard implements flashcardApp {
         message: "Хариулт: ",
       },
     ];
+    let cards: flashcardData[] = Database.flashcards;
     const answers: flashcardData = await inquirer.prompt(options);
-    this.cards.push(answers);
-    const dataString = JSON.stringify(this.cards);
-    await this.updateDatabase(dataString);
+    cards.push(answers);
+    const dataString = JSON.stringify(cards);
+    this.updateDatabase(dataString);
+  }
+
+  updateDatabase(dataString: string) {
+    const database = new Database();
+    database.updateDatabase(dataString);
   }
 }
