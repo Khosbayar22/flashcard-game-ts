@@ -1,27 +1,56 @@
-/* 
-    ? Өгөгдлийн сангаас өгөгдөл унших
-    ? Зөв хариулт эсэхийг шалгах
-*/
 import * as fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
+import { Database } from "./Database.js";
 
 export class PlayFlashcard implements flashcardApp {
   cards: flashcardData[] = [];
 
-  async startApp(shuffle: boolean = false) {
-    await this.initDatabase();
+  async startApp() {
+    let options: QuestionCollection = [
+      {
+        type: "number",
+        name: "questionNumber",
+        message: "Та хэдэн асуултанд хариулах вэ?",
+      },
+      {
+        type: "confirm",
+        name: "confirmShuffle",
+        message: "Асуултуудыг самансаргүй байдлаар холих",
+      },
+    ];
+    await inquirer.prompt(options).then(async (answers) => {
+      console.log(
+        "** Амжилт хүсье, Хэрвээ та зогсоохыг хүсвэл 'back' эсвэл 'b' гэж бичээрэй! **"
+      );
+      await this.play(
+        answers?.confirmShuffle,
+        answers?.questionNumber ? answers.questionNumber : 5
+      );
+    });
+  }
+
+  private async play(shuffle: boolean = false, questionNumber: number) {
+    this.cards = Database.flashcards;
+
     if (this.cards.length > 0) {
       let questions = shuffle ? this.shuffleArray(this.cards) : this.cards;
       let sequence: number = 1;
       let correct = 0;
-      for (const el of questions) {
+
+      for (const el of questions.slice(0, questionNumber)) {
         const question: QuestionCollection = {
           type: "input",
           name: "answer",
           message: el.question,
         };
         console.log(`Карт #${sequence} ----------------`);
-        await inquirer.prompt(question).then((answers) => {
+        const prompt = await inquirer.prompt(question).then((answers) => {
+          if (
+            answers.answer.toLowerCase() === "back" ||
+            answers.answer.toLowerCase() === "b"
+          ) {
+            return false;
+          }
           if (
             el.answer.toLowerCase() === this.setStringFormat(answers.answer)
           ) {
@@ -30,33 +59,20 @@ export class PlayFlashcard implements flashcardApp {
           } else {
             console.log(`__ Буруу! Зөв хариулт ${el.answer} __\n`);
           }
+          return true;
         });
+        if (!prompt) {
+          break;
+        }
         sequence += 1;
       }
-      console.log(`Нийт: ${questions.length} / ${correct} ----------------`);
+      console.log(`Нийт: ${questionNumber} / ${correct} ----------------`);
     } else {
       console.log("** Хоосон байна! **");
     }
   }
 
-  // DRS 
-  initDatabase() {
-    return new Promise((resolve, reject) => {
-      fs.readFile("db.json", "utf8", (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        const jsonData = JSON.parse(data);
-        this.cards = jsonData;
-
-        resolve(this.cards);
-      });
-    });
-  }
-
-  shuffleArray<T>(array: T[]): T[] {
+  private shuffleArray<T>(array: T[]): T[] {
     const shuffledArray = [...array];
 
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -70,7 +86,7 @@ export class PlayFlashcard implements flashcardApp {
     return shuffledArray;
   }
 
-  setStringFormat(inputString: string): string {
+  private setStringFormat(inputString: string): string {
     const latinToCyrillicMap: { [key: string]: string } = {
       sh: "ш",
       kh: "х",

@@ -1,52 +1,65 @@
-/* 
-    ? Өгөгдлийн сангаас өгөгдлийг уншина.
-    ? Өгөгдөл шинэчлэх
-    ? Устгах
-    ? Үүсгэх
-    ? Засах
-*/
-import * as fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
+import { Database } from "./Database.js";
 
 export class EditFlashcard implements flashcardApp {
   cards: flashcardData[] = [];
 
-  initDatabase() {
-    return new Promise((resolve, reject) => {
-      fs.readFile("db.json", "utf8", (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        const jsonData = JSON.parse(data);
-        this.cards = jsonData;
-
-        resolve(this.cards);
-      });
-    });
-  }
-  async startApp() {}
-
-  private updateDatabase(dataString: string) {
-    return new Promise((resolve, reject) => {
-      fs.writeFile("./db.json", dataString, (err) => {
-        if (err) {
-          console.log("__ Алдаатай __");
-          reject(true);
-        } else {
-          console.log("** Амжилттай! **");
-          resolve(true);
-        }
-      });
+  async startApp() {
+    this.cards = Database.flashcards;
+    let options: QuestionCollection = [
+      {
+        type: "list",
+        name: "option",
+        message: "Засах үйлдэл",
+        choices: ["+ Нэмэх", "Засах", "Устгах", "< Буцах"],
+      },
+    ];
+    await inquirer.prompt(options).then(async (answers) => {
+      if (answers.option === "Засах") {
+        await this.editFlashcard();
+      } else if (answers.option === "Устгах") {
+        await this.deleteFlashcard();
+      } else if (answers.option === "+ Нэмэх") {
+        await this.addFlashcard();
+      }
     });
   }
   async editFlashcard() {
-    this.deleteFlashcard();
-    this.addFlashcard();
+    const choices = this.cards.map((item) => {
+      return item.question;
+    });
+    let options: QuestionCollection = [
+      {
+        type: "list",
+        name: "choice",
+        message: "Өөрчлөх flashcard -аа сонгоно уу",
+        choices: choices,
+      },
+    ];
+    const answers = await inquirer.prompt(options);
+
+    let newOptions: QuestionCollection = [
+      {
+        type: "input",
+        name: "question",
+        message: "Асуулт: ",
+      },
+      {
+        type: "input",
+        name: "answer",
+        message: "Хариулт: ",
+      },
+    ];
+    const newAnswers: flashcardData = await inquirer.prompt(newOptions);
+
+    const updateData = this.cards.filter((item) => {
+      return item.question !== answers.choice;
+    });
+    updateData.push(newAnswers);
+    const dataString = JSON.stringify(updateData);
+    this.updateDatabase(dataString);
   }
   async deleteFlashcard() {
-    await this.initDatabase();
     const choices = this.cards.map((item) => {
       return item.question;
     });
@@ -63,10 +76,9 @@ export class EditFlashcard implements flashcardApp {
       (item) => !answers.choice.includes(item.question)
     );
     const dataString = JSON.stringify(deletedData);
-    await this.updateDatabase(dataString);
+    this.updateDatabase(dataString);
   }
   async addFlashcard() {
-    await this.initDatabase();
     let options: QuestionCollection = [
       {
         type: "input",
@@ -82,6 +94,10 @@ export class EditFlashcard implements flashcardApp {
     const answers: flashcardData = await inquirer.prompt(options);
     this.cards.push(answers);
     const dataString = JSON.stringify(this.cards);
-    await this.updateDatabase(dataString);
+    this.updateDatabase(dataString);
+  }
+  private updateDatabase(dataString: string) {
+    const database = new Database();
+    database.updateDatabase(dataString);
   }
 }

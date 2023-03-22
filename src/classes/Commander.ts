@@ -1,11 +1,8 @@
-/* 
-    ? Тайлбар
-    ? Сонголтууд, төлөв шалгаад ямар байх эсэхийг шийднэ.
-*/
 import inquirer, { QuestionCollection } from "inquirer";
 import { LearnFlashcard } from "./LearnFlashcard.js";
 import { EditFlashcard } from "./EditFlashcard.js";
 import { PlayFlashcard } from "./PlayFlashcard.js";
+import { Database } from "./Database.js";
 
 export class Commander {
   state: string;
@@ -21,6 +18,14 @@ export class Commander {
   async startApp() {
     let flag: boolean = true;
     let options: QuestionCollection = [];
+
+    const database = new Database();
+    database.initDatabase();
+    let apps = {
+      play: new PlayFlashcard(),
+      learn: new LearnFlashcard(),
+      edit: new EditFlashcard(),
+    };
 
     while (flag) {
       /* СОНГОЛТ */
@@ -40,49 +45,20 @@ export class Commander {
             this.state = "edit";
           } else if (answers.option === "Сурах") {
             this.state = "learn";
-          } else {
+          } else if (answers.option === "< Гарах") {
             flag = false;
+          } else {
+            console.log("** Та доорх сонголтоос сонгоно уу! **");
           }
         });
-        /* ТОГЛОХ */
       } else if (this.state === "play") {
-        const flashcard = new PlayFlashcard();
-        options = [
-          {
-            type: "confirm",
-            name: "confirmShuffle",
-            message: "Асуултуудыг самансаргүй байдлаар холих",
-          },
-        ];
-        await inquirer.prompt(options).then(async (answers) => {
-          await flashcard.startApp(answers?.confirmShuffle);
-        });
+        await apps[this.state].startApp();
         this.state = "idle";
-        /* ЗАСАХ */
       } else if (this.state === "edit") {
-        const flashcard = new EditFlashcard();
-        options = [
-          {
-            type: "list",
-            name: "option",
-            message: "Засах үйлдэл",
-            choices: ["+ Нэмэх", "Засах", "Устгах", "< Буцах"],
-          },
-        ];
-        await inquirer.prompt(options).then(async (answers) => {
-          if (answers.option === "Засах") {
-            await flashcard.editFlashcard();
-          } else if (answers.option === "Устгах") {
-            await flashcard.deleteFlashcard();
-          } else if (answers.option === "+ Нэмэх") {
-            await flashcard.addFlashcard();
-          }
-        });
+        await apps[this.state].startApp();
         this.state = "idle";
-        /* СУРАХ */
       } else if (this.state === "learn") {
-        const flashcard = new LearnFlashcard();
-        flashcard.startApp();
+        await apps[this.state].startApp();
         this.state = "idle";
       }
     }

@@ -1,12 +1,1 @@
-[
-  { "question": "Car", "answer": "Машин" },
-  { "question": "Tree", "answer": "Мод" },
-  { "question": "Book", "answer": "Ном" },
-  { "question": "Dog", "answer": "Нохой" },
-  { "question": "Sun", "answer": "Нар" },
-  { "question": "Fish", "answer": "Загас" },
-  { "question": "House", "answer": "Гэр" },
-  { "question": "Chair", "answer": "Сандал" },
-  { "question": "Phone", "answer": "Утас" },
-  { "question": "Door", "answer": "Хаалга" }
-]
+[{"question":"Tree","answer":"Мод"},{"question":"Book","answer":"Ном"},{"question":"Dog","answer":"Нохой"},{"question":"Sun","answer":"Нар"},{"question":"Fish","answer":"Загас"},{"question":"House","answer":"Гэр"},{"question":"Chair","answer":"Сандал"},{"question":"Phone","answer":"Утас"},{"question":"Door","answer":"Хаалга"},{"question":"School","answer":"Сургууль"}]
