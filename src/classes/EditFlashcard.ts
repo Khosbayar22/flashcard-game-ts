@@ -2,7 +2,8 @@ import inquirer, { QuestionCollection } from "inquirer";
 import { Database } from "./Database.js";
 
 export class EditFlashcard implements flashcardApp {
-  cards: flashcardData[] = [];
+  cards: flashcardData[];
+  run(): void {}
 
   async startApp() {
     this.cards = Database.flashcards;
@@ -59,6 +60,7 @@ export class EditFlashcard implements flashcardApp {
     const dataString = JSON.stringify(updateData);
     this.updateDatabase(dataString);
   }
+
   async deleteFlashcard() {
     const choices = this.cards.map((item) => {
       return item.question;
@@ -72,12 +74,13 @@ export class EditFlashcard implements flashcardApp {
       },
     ];
     const answers = await inquirer.prompt(options);
-    const deletedData = this.cards.filter(
+    const deletedData = cards.filter(
       (item) => !answers.choice.includes(item.question)
     );
     const dataString = JSON.stringify(deletedData);
     this.updateDatabase(dataString);
   }
+
   async addFlashcard() {
     let options: QuestionCollection = [
       {
@@ -91,6 +94,7 @@ export class EditFlashcard implements flashcardApp {
         message: "Хариулт: ",
       },
     ];
+    let cards: flashcardData[] = Database.flashcards;
     const answers: flashcardData = await inquirer.prompt(options);
     this.cards.push(answers);
     const dataString = JSON.stringify(this.cards);

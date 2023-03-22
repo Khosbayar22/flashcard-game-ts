@@ -3,7 +3,18 @@ import inquirer, { QuestionCollection } from "inquirer";
 import { Database } from "./Database.js";
 
 export class PlayFlashcard implements flashcardApp {
-  cards: flashcardData[] = [];
+  cards: flashcardData[];
+  run(): void {
+    throw new Error("Method not implemented.");
+  }
+  async startApp() {
+    const options = [
+      {
+        type: "confirm",
+        name: "confirmShuffle",
+        message: "Асуултуудыг самансаргүй байдлаар холих",
+      },
+    ];
 
   async startApp() {
     let options: QuestionCollection = [

@@ -5,10 +5,18 @@ import { PlayFlashcard } from "./PlayFlashcard.js";
 import { Database } from "./Database.js";
 
 export class Commander {
-  state: string;
+  private applications: flashcardApp[] = [];
 
-  constructor(state: string = "idle") {
-    this.state = state;
+  constructor() {
+    const database = new Database();
+    database.initDatabase();
+
+    const playFlashcard = new PlayFlashcard();
+    const learnFlashcard = new LearnFlashcard();
+    const editFlashcard = new EditFlashcard();
+
+    this.applications.push(playFlashcard, learnFlashcard, editFlashcard);
+    this.listenBackEvent();
   }
 
   sayHello() {
@@ -16,8 +24,7 @@ export class Commander {
   }
 
   async startApp() {
-    let flag: boolean = true;
-    let options: QuestionCollection = [];
+    let flag = true;
 
     const database = new Database();
     database.initDatabase();
@@ -63,5 +70,11 @@ export class Commander {
       }
     }
     console.log("** Баяртай! **");
+  }
+
+  private listenBackEvent() {
+    process.on("disconnect", () => {
+      console.log(`About to exit with code: `);
+    });
   }
 }
