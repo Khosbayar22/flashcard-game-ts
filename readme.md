@@ -10,7 +10,9 @@ Flashcard object нь асуулт, хариулт гэсэн бүтэцтэй. 
 
 ## Screenshots
 
-![App Screenshot](https://raw.githubusercontent.com/Khosbayar22/flashcard-game-java/test/screenshots/main-interface.png?token=GHSAT0AAAAAAB6CFBEPG6WA4UXMJSVS7CRWY77N7GA)
+![App Screenshot](https://raw.githubusercontent.com/Khosbayar22/flashcard-game-ts/test/screenshots/ui-1.png?token=GHSAT0AAAAAAB6CFBEPNCMGQWHTNGGMXYNYZA4JBEQ)
+
+![App Screenshot](https://raw.githubusercontent.com/Khosbayar22/flashcard-game-ts/test/screenshots/ui-2.png?token=GHSAT0AAAAAAB6CFBEOV2XWXYNXCPB2E7FGZA4JBVQ)
 
 ## Ажилуулах
 
