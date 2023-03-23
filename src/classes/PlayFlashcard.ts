@@ -3,18 +3,10 @@ import inquirer, { QuestionCollection } from "inquirer";
 import { Database } from "./Database.js";
 
 export class PlayFlashcard implements flashcardApp {
-  cards: flashcardData[];
-  run(): void {
-    throw new Error("Method not implemented.");
+  getTitle(): string {
+    return "Тоглох";
   }
-  async startApp() {
-    const options = [
-      {
-        type: "confirm",
-        name: "confirmShuffle",
-        message: "Асуултуудыг самансаргүй байдлаар холих",
-      },
-    ];
+  cards: flashcardData[] = [];
 
   async startApp() {
     let options: QuestionCollection = [

@@ -1,6 +1,6 @@
 # Flashcard CLI (Typescript)
 
-Энэхүү flashcard cli програм нь typescript дээр анхлан суралцаж буй хүмүүст concept, syntax, design -ийг туршиж, сурахад тусална.
+Энэхүү simple flashcard cli програм нь Typescript дээр анхлан суралцаж буй хүмүүст concept, syntax, design -ийг сурахад тусална.
 
 Flashcard object нь асуулт, хариулт гэсэн бүтэцтэй. Application нь
 

@@ -2,11 +2,14 @@ import inquirer, { QuestionCollection } from "inquirer";
 import { Database } from "./Database.js";
 
 export class EditFlashcard implements flashcardApp {
-  cards: flashcardData[];
-  run(): void {}
+  getTitle(): string {
+    return "Өөрчлөлт оруулах";
+  }
+  cards: flashcardData[] = [];
 
   async startApp() {
     this.cards = Database.flashcards;
+
     let options: QuestionCollection = [
       {
         type: "list",
@@ -74,7 +77,7 @@ export class EditFlashcard implements flashcardApp {
       },
     ];
     const answers = await inquirer.prompt(options);
-    const deletedData = cards.filter(
+    const deletedData = this.cards.filter(
       (item) => !answers.choice.includes(item.question)
     );
     const dataString = JSON.stringify(deletedData);
